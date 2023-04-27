@@ -56,9 +56,7 @@ def input_verify_code_manual(image_path):
 
     image = Image.open(image_path)
     image.show()
-    code = input(
-        "image path: {}, input verify code answer:".format(image_path)
-    )
+    code = input("image path: {}, input verify code answer:".format(image_path))
     return code
 
 
@@ -96,28 +94,29 @@ def invoke_tesseract_to_recognize(img):
     try:
         res = pytesseract.image_to_string(img)
     except FileNotFoundError:
-        raise Exception(
-            "tesseract 未安装，请至 https://github.com/tesseract-ocr/tesseract/wiki 查看安装教程"
-        )
+        raise Exception("tesseract 未安装，请至 https://github.com/tesseract-ocr/tesseract/wiki 查看安装教程")
     valid_chars = re.findall("[0-9a-z]", res, re.IGNORECASE)
     return "".join(valid_chars)
 
 
-def get_yzm_from_image(image: Image):
+def get_yzm_from_image(image: Image, dir):
     """
     liudongming
     image是整个验证码弹窗的截图
     :param image:
     :return:
     """
-    left = 188
-    top = 89
+    left = 340
+    top = 177
     code = ''
-    rangle = (left, top, left + 71, top + 23)
+    rangle = (left, top, left + 100, top + 43)
+
+    print(f"rangle:{rangle}")
     try:
         yzm = image.crop(rangle)
-        yzm.save(r'C:\yzm.jpg')
-        code = invoke_tesseract_to_recognize(r'C:\yzm.jpg')
+        image.save(fr"{dir}\temp.jpg")
+        yzm.save(fr"{dir}\yzm.jpg")
+        code = invoke_tesseract_to_recognize(fr"{dir}\yzm.jpg")
         print(f'验证码:{code}')
     except Exception as e:
         print(f'get_yzm_from_image 异常:{e}')
